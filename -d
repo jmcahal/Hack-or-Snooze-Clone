@@ -1,0 +1,12 @@
+HTTP/1.1 404 Not Found
+Server: Cowboy
+Connection: keep-alive
+X-Powered-By: Express
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Content-Length: 125
+Etag: W/"7d-9vMFcJpo2Yv2M53XhNRILf/KylY"
+Date: Tue, 16 Jun 2020 13:46:01 GMT
+Via: 1.1 vegur
+
+{"error":{"status":404,"title":"Resource Not Found","message":"/signup is not valid path to a Hack-Or-Snooze API resource."}}

@@ -8,6 +8,12 @@ $(async function() {
   const $ownStories = $("#my-articles");
   const $navLogin = $("#nav-login");
   const $navLogOut = $("#nav-logout");
+  const $navSubmit = $("#nav-submit");
+  const $mainNavLinks = $("#main-nav-links");
+  const $container = $(".articles-container");
+  const $favorites = $("#favorited-articles");
+  const $navFaves = $("#nav-favorites");
+
 
   // global storyList variable
   let storyList = null;
@@ -16,6 +22,65 @@ $(async function() {
   let currentUser = null;
 
   await checkIfLoggedIn();
+
+// my code
+
+// Event listener to get article submission form.
+$navSubmit.on("click", function() {
+  // show the $submitForm to store new article
+  $submitForm.show();
+});
+
+// Event listener for the article form submission. 
+$submitForm.on("submit", async function(evt) {
+  evt.preventDefault(); // no page-refresh on submit
+
+  // grab the author, title, and url.
+  const author = $("#author").val();
+  const title = $("#title").val();
+  const url = $("#url").val();
+  const hostName = getHostName(url);
+  const username = currentUser.username;
+  const storyObject = await storyList.addStory(currentUser, {
+    title,
+    author,
+    url,
+    username
+  });
+  generateStoryHTML(storyObject);
+  $allStoriesList.prepend(storyMarkup);
+  $submitForm.slideUp("slow");
+  $submitForm.trigger("reset");
+});
+
+// Event listener to get article favorites page.
+$navFaves.on("click", function() {
+  console.log("hello");
+  // hide elements
+  hideElements();
+  // show favorites
+  $favorites.show();
+});
+
+
+// Event listener for star/ favorite clicks
+$container.on("click", ".star", async function (evt){
+  if(currentUser){
+    const $target = $(evt.target);
+    const $closestLi = $target.closest('li');
+    const storyId = $closestLi.attr('id');
+    if($target.hasClass("fas")){
+      console.log("fas");
+      // await currentUser.removeFavorite(storyId);
+      $target.closest("i").toggleClass("fas far");
+    }
+    else {
+      // await currentUser.addFavorite(storyId);
+      $target.closest("i").toggleClass("fas far");
+    }
+  }  
+});
+// my code end
 
   /**
    * Event listener for logging in.
@@ -158,8 +223,12 @@ $(async function() {
     let hostName = getHostName(story.url);
 
     // render story markup
+    // added star span
     const storyMarkup = $(`
       <li id="${story.storyId}">
+        <span class = "star">
+          <i class ="far fa-star"></i>
+        </span>
         <a class="article-link" href="${story.url}" target="a_blank">
           <strong>${story.title}</strong>
         </a>
@@ -189,6 +258,7 @@ $(async function() {
   function showNavForLoggedInUser() {
     $navLogin.hide();
     $navLogOut.show();
+    $mainNavLinks.show();
   }
 
   /* simple function to pull the hostname from a URL */
@@ -215,3 +285,4 @@ $(async function() {
     }
   }
 });
+
