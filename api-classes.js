@@ -61,6 +61,21 @@ class StoryList {
   user.ownStories.unshift(newStory);
   return newStory;
   }
+
+  // delete or remove stories
+  async removeStory(user, storyId) {
+    await axios({
+      method: "DELETE",
+      url: `${BASE_URL}/stories/${storyId}`,
+      data: {
+        token: user.loginToken
+      }
+    });
+    // filter out story ID
+    this.stories = this.stories.filter(story => story.storyId !== storyId);
+    // filter out story form user's list
+    user.ownStories = user.ownStories.filter(s => s.storyId !== storyId);
+  }
 } 
 
 
@@ -165,7 +180,50 @@ class User {
     existingUser.ownStories = response.data.user.stories.map(s => new Story(s));
     return existingUser;
   }
+
+  async retrieveDetails() {
+    const response = await axios.get(`${BASE_URL}/users/${this.username}`, 
+    {
+      params: {
+        token: this.loginToken
+      }
+    });
+
+    // update user's properties from the API response.
+    this.name = response.data.user.name;
+    this.createdAt = response.data.user.createdAt;
+    this.updatedAt = response.data.user.updatedAt;
+
+    // convert favorites and ownStories to insstances of Story
+    this.favorites = response.data.user.favorites.map(s => new Story(s));
+    this.ownStories = response.data.user.stories.map(s => new Story(s));
+    return this;
+  }
+  // method to post or delete to the API for stories
+  async _toggleFavorite( storyId, httpVerb) {
+    await axios({
+      method: httpVerb,
+      url: `${BASE_URL}/users/${this.username}/favorites/${storyId}`,
+      data: {
+        token: this.loginToken
+      }
+    });
+    await this.retrieveDetails();
+    return this;
+  }
+
+  // function to add a story to the favorites list and update the API
+  addFavorite(storyId){
+  return this._toggleFavorite(storyId, "POST");
+  }
+
+  // function to remove a story to the favorites list and update the API
+  removeFavorite(storyId){
+    return this._toggleFavorite(storyId, "DELETE");
+    }
+
 }
+
 
 /**
  * Class to represent a single story.
