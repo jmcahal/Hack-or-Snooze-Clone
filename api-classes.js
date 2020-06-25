@@ -222,6 +222,31 @@ class User {
     return this._toggleFavorite(storyId, "DELETE");
     }
 
+  // // sends a patch request to update users name
+  // async update(userData) {
+  //   const response = await axios({
+  //     method: "PATCH",
+  //     url: `${BASE_URL}/users/${this.username}`,
+  //     data: {
+  //       user: userData,
+  //       token: this.loginToken
+  //     }
+  //   });
+  // //  update the user name with the response data
+  //   this.name = response.data.user.name;
+
+  //   return this;
+  // }
+  // // sends a DELETE request to the API to remove a user
+  // async remove(){
+  //   const response = await axios({
+  //     method: "DELETE",
+  //     url: `${BASE_URL}/users/${this.username}`,
+  //     data: {
+  //       token: this.loginToken
+  //     }
+  //   });
+  // }
 }
 
 
@@ -245,4 +270,24 @@ class Story {
     this.createdAt = storyObj.createdAt;
     this.updatedAt = storyObj.updatedAt;
   }
-}
+
+//   // PATCH request to update a story
+//   async update(user, storyData) {
+//     const response = await axios({
+//       method: "PATCH",
+//       url: `${BASE_URL}/stories/${this.storyId}`,
+//       data: {
+//         token: user.loginToken,
+//         story: storyData
+//       }
+//     });
+
+//     const { author, title, url, updatedAt } = response.data.story;
+//     // filds to update with a PATCH request
+//     this.author = author;
+//     this.title = title;
+//     this.url = urlthis.updatedAt = updatedAt;
+
+//     return this;
+//   }
+ }

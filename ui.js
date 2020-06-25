@@ -16,9 +16,9 @@ $(async function() {
   const $favorites = $("#favorited-articles");
   const $navFaves = $("#nav-favorites");
   // const $body = $("body");
-  // const $navWelcome = $("#nav-welcome");
-  const $naveUserProfile =$("#nav-user-profile");
-  // const $userProfile =$("#user-profile");
+  const $navWelcome = $("#nav-welcome");
+  const $navUserProfile =$("#nav-user-profile");
+  const $userProfile =$("#user-profile");
 
   // global storyList variable
   let storyList = null;
@@ -26,6 +26,7 @@ $(async function() {
   // global currentUser variable
   let currentUser = null;
 
+  
   await checkIfLoggedIn();
 
   /**
@@ -136,7 +137,6 @@ console.log("click");
   /**
    * Event Handler for Clicking Login
    */
-
   $navLogin.on("click", function() {
     // Show the Login and Create Account Forms
     $loginForm.slideToggle();
@@ -144,16 +144,28 @@ console.log("click");
     $allStoriesList.toggle();
   });
 
+// Event handler On Profile
+$navUserProfile.on("click", function() {
+  // Hide elements
+  hideElements();
+  // show the profile
+  $userProfile.show();
+})
+
 // Event handler to get article submission form.
 $navSubmit.on("click", function() {
-  // show the $submitForm to store new article
-  $submitForm.show();
+  if (currentUser) {
+    hideElements();
+    $allStoriesList.show();
+    // show the $submitForm to store new article
+    $submitForm.slideToggle();
+  }
 });
 
 
 // Event handler to get article favorites page.
 $navFaves.on("click", function() {
-  console.log("showing faves");
+  // console.log("showing faves");
   // hide elements
   hideElements();
   if(currentUser){
@@ -247,7 +259,7 @@ $ownStories.on("click", ".trash-can", async function(evt) {
     $("#profile-name").text(`Name: ${currentUser.name}`);
     $("#profile-username").text(`Username: ${currentUser.username}`);
     $("#profile-account-date").text(`Account Created: ${currentUser.createdAt.slice(0,10)}`);
-    $naveUserProfile.text(`${currentUser.username}`);
+    $navUserProfile.text(`${currentUser.username}`);
   }
   /**
    * A rendering function to call the StoryList.getStories static method,
@@ -345,15 +357,18 @@ function generateMyStories() {
       $ownStories,
       $favorites,
       $loginForm,
-      $createAccountForm
+      $createAccountForm,
+      $userProfile
     ];
     elementsArr.forEach($elem => $elem.hide());
   }
 
   function showNavForLoggedInUser() {
     $navLogin.hide();
+    $userProfile.hide();
     $navLogOut.show();
     $mainNavLinks.show();
+    $navWelcome.show();
   }
 
   //  see if a story is a favorite
